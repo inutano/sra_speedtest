@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
+#
+# usage:
+#  ruby decompress_speed.rb <filename>
+#  ruby decompress_speed.rb <option> <dirname>
+#  specify type of the files inside (--gz, --bz2) when a directory on argument.
+#
 
 require "fileutils"
 require "twitter"
