@@ -1,11 +1,20 @@
 #!/home/iNut/local/bin/zsh
+#
+# time file transfer from NCBI, EBI, and DDBJ with various transfer protocol.
+# calc avg time send it to stdout
+#
+# requirement: SRA_Accessions.tab from ftp.ncbi.nlm.nih.gov/sra/reports/Metadata
+#
+###################################################################################
 
-# time format
+# time format (set as showing total time by second only)
 TIMEFMT="%E"
 
+### change here to target Run id
 # set ids
-run_id="DRR000983"
-# SRR073092
+run_id="DRR000983" # SRR073092
+
+# related ids
 run_head=`echo ${run_id} | sed -e 's:[0-9]\{3\}$::'`
 run_db=`echo ${run_id} | sed -e 's:[0-9]\{6\}::'`
 run_db_lc=`echo ${run_db} | tr '[:upper:]' '[:lower:]'`
@@ -20,8 +29,19 @@ exp_head=`echo ${exp_id} | sed -e 's:[0-9]\{3\}$::'`
 exp_db=`echo ${exp_id} | sed -e 's:[0-9]\{6\}$::'`
 
 # path to aspera connect
-aspera="/home/iNut/.aspera/connect"
+aspera="~/.aspera/connect"
 aspera_putty="${aspera}/etc/asperaweb_id_dsa.putty"
+
+# preparing target directories
+if [ ! -e ./ncbi ] ; then
+	mkdir ./ncbi
+fi
+if [ ! -e ./ebi ] ; then
+	mkdir ./ebi
+fi
+if [ ! -e ./ddbj ] ; then
+	mkdir ./ddbj
+fi
 
 ## NCBI
 
