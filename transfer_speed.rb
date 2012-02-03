@@ -52,20 +52,21 @@ class SRATransfer
 	end
 	def report(avgtime, size, pnum = 0)
 		avgspeed = size / avgtime
-		puts "total size => #{size}, parallel => #{num}, avgtime => #{avgtime}, avgspeed => #{avgspeed}"
+		puts "total size => #{size}, parallel => #{pnum}, avgtime => #{avgtime}, avgspeed => #{avgspeed}"
 	end
 end
 
 if __FILE__ == $0
 	
 	runid = ARGV.first
-	transfer = SRATransfer.new(runid)
+	accessions = "./SRA_Accessions.tab"
+	transfer = SRATransfer.new(runid, accessions)
 	
 	puts "litesra from NCBI, lftp"
 	[1,2,4,8].each do |pnum|
 		avgtime = 3.times.map{ transfer.ncbi_ls_ftp(pnum) }.reduce(:+) / 3
 		size = Dir.glob("./ncbi/#{runid}_nlf/*.sra").map{|f| File.size(f) }.reduce(:+)
-		transfer.report(avgtime, size, num)
+		transfer.report(avgtime, size, pnum)
 	end
 	
 	puts "litesra from NCBI, aspera connect"
@@ -75,7 +76,7 @@ if __FILE__ == $0
 	
 	puts "litesra from EBI, lftp"
 	[1,2,4,8].each do |pnum|
-		avgtime = 3.times.map{ transfer.ebi_ls_ftp(num) }.reduce(:+) / 3
+		avgtime = 3.times.map{ transfer.ebi_ls_ftp(pnum) }.reduce(:+) / 3
 		size = Dir.glob("./ebi/#{runid}_elf/*.sra").map{|f| File.size(f)}.reduce(:+)
 		transfer.report(avgtime, size, pnum)
 	end
@@ -87,7 +88,7 @@ if __FILE__ == $0
 	
 	puts "fastq from EBI, lftp"
 	[1,2,4,8].each do |pnum|
-		avgtime = 3.times.map{ transfer.ebi_fq_ftp(num) }.reduce(:+) / 3
+		avgtime = 3.times.map{ transfer.ebi_fq_ftp(pnum) }.reduce(:+) / 3
 		size = Dir.glob("./ebi/#{runid}_eff/*.fastq*").map{|f| File.size(f)}.reduce(:+)
 		transfer.report(avgtime, size, pnum)
 	end
@@ -99,14 +100,14 @@ if __FILE__ == $0
 
 	puts "litesra from DDBJ, lftp"
 	[1,2,4,8].each do |pnum|
-		avgtime = 3.times.map{ transfer.ddbj_ls_ftp(num) }.reduce(:+) / 3
+		avgtime = 3.times.map{ transfer.ddbj_ls_ftp(pnum) }.reduce(:+) / 3
 		size = Dir.glob("./ddbj/#{runid}_dlf/*.sra").map{|f| File.size(f)}.reduce(:+) 
 		transfer.report(avgtime, size, pnum)
 	end
 	
 	puts "fastq from DDBJ, lftp"
 	[1,2,4,8].each do |pnum|
-		avgtime = 3.times.map{ transfer.ddbj_fq_ftp(num) }.reduce(:+) / 3
+		avgtime = 3.times.map{ transfer.ddbj_fq_ftp(pnum) }.reduce(:+) / 3
 		size = Dir.glob("./ddbj/#{runid}_dff/*.fastq*").map{|f| File.size(f)}.reduce(:+)
 		transfer.report(avgtime, size, pnum)
 	end
