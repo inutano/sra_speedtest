@@ -4,7 +4,8 @@
 TIMEFMT="%E"
 
 # set ids
-run_id="SRR073092"
+run_id="DRR000983"
+# SRR073092
 run_head=`echo ${run_id} | sed -e 's:[0-9]\{3\}$::'`
 run_db=`echo ${run_id} | sed -e 's:[0-9]\{6\}::'`
 run_db_lc=`echo ${run_db} | tr '[:upper:]' '[:lower:]'`
@@ -45,7 +46,7 @@ done
 aspera_ncbi_path="anonftp@ftp-trace.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/litesra/${run_db}/${run_head}/${run_id}"
 for i in 1 2 3 ; do
 	rm -fr "./ncbi/${run_id}"
-	(time ${aspera}/bin/ascp -v -k1 -QT -i ${aspera_putty} ${aspera_ncbi_path} ./ncbi) 2>&1 | sed -e "s:s$::" > ./ncbi/${run_id}_ncbi_aspera_${i}
+	(time ${aspera}/bin/ascp -q -k1 -QT -i ${aspera_putty} ${aspera_ncbi_path} ./ncbi) 2>&1 | sed -e "s:s$::" > ./ncbi/${run_id}_ncbi_aspera_${i}
 done
 
 echo "litesra from ncbi, aspera connect. avg;"
@@ -78,7 +79,7 @@ done
 aspera_ebi_path_fq="era-fasp@fasp.sra.ebi.ac.uk:/vol1/fastq/${run_head}/${run_id}"
 for i in 1 2 3 ; do
 	rm -fr "./ebi/${run_id}"
-	(time ${aspera}/bin/ascp -v -k1 -QT -i ${aspera_putty} ${aspera_ebi_path_fq} ./ebi) 2>&1 | sed -e 's:s$::' > ./ebi/${run_id}_ebi_fq_aspera_${i}
+	(time ${aspera}/bin/ascp -q -k1 -QT -i ${aspera_putty} ${aspera_ebi_path_fq} ./ebi) 2>&1 | sed -e 's:s$::' > ./ebi/${run_id}_ebi_fq_aspera_${i}
 done
 
 echo "fq.gz from ebi, aspera connect. avg;"
@@ -109,7 +110,7 @@ done
 aspera_ebi_path_ls="era-fasp@fasp.sra.ebi.ac.uk:/vol1/${run_db_lc}/${run_head}/${run_id}"
 for i in 1 2 3 ; do
 	rm -fr "./ebi/${run_id}"
-	(time ${aspera}/bin/ascp -v -k1 -QT -i ${aspera_putty} ${aspera_ebi_path_ls} ./ebi) 2>&1 | sed -e "s:s$::" > ./ebi/${run_id}_ebi_ls_aspera_${i}
+	(time ${aspera}/bin/ascp -q -k1 -QT -i ${aspera_putty} ${aspera_ebi_path_ls} ./ebi) 2>&1 | sed -e "s:s$::" > ./ebi/${run_id}_ebi_ls_aspera_${i}
 done
 
 echo "litesra from ebi, aspera connect. avg;"
