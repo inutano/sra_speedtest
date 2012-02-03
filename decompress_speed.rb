@@ -19,7 +19,7 @@ end
 
 def decomp_sra(litesra)
 	FileUtils.cp "#{litesra}", "#{litesra}_rep"
-	FileUtils.rm_f File.glob("*.fastq")
+	FileUtils.rm_f Dir.glob("*.fastq")
 	time = `(/usr/bin/time -f "%e" ~/local/bin/sratoolkit/fastq-dump --split-3 #{litesra} > /dev/null) 2>&1`.to_f
 	FileUtils.mv "#{litesra}_rep", "#{litesra}"
 	time
@@ -36,13 +36,13 @@ def decomp_gzall(dir)
 end
 
 def decomp_bz2(bz2)
-	FileUtils.rm_f File.glob("*.fastq")
+	FileUtils.rm_f Dir.glob("*.fastq")
 	`(/usr/bin/time -f "%e" bunzip2 -k #{bz2} > /dev/null) 2>&1`.to_f
 end
 
 def decomp_bz2all(dir)
+	FileUtils.rm_f Dir.glob("#{dir}/*.fastq")
 	sam = Dir.entries(dir).select{|fname| fname =~ /.bz2$/ }.map do |fname|
-		FileUtils.rm_f File.glob("#{dir}/*.fastq")
 		`(/usr/bin/time -f "%e" bunzip2 -k #{dir}/#{fname} > /dev/null) 2>&1`.to_f
 	end
 	sam.reduce(:+)
@@ -51,7 +51,7 @@ end
 def report(input, avgtime, avgspeed)
 	puts "#{input}: avgtime => #{avgtime}, avgspeed => #{avgspeed}"
 	tw = Twitter::Client.new
-	tw.update("@inut processo per #{input} ha finito")
+	tw.update("@inut processo per #{input.gsub(".","_")} ha finito")
 end
 
 
