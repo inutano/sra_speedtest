@@ -18,9 +18,10 @@ Twitter.configure do |config|
 end
 
 def decomp_sra(litesra)
-	FileUtils.cp "#{litesra}" "#{litesra}_rep"
+	FileUtils.cp "#{litesra}", "#{litesra}_rep"
+	FileUtils.rm_f File.glob("*.fastq")
 	time = `(/usr/bin/time -f "%e" ~/local/bin/sratoolkit/fastq-dump --split-3 #{litesra} > /dev/null) 2>&1`.to_f
-	FileUtils.mv "#{litesra}_rep" "#{litesra}"
+	FileUtils.mv "#{litesra}_rep", "#{litesra}"
 	time
 end
 
@@ -35,11 +36,13 @@ def decomp_gzall(dir)
 end
 
 def decomp_bz2(bz2)
-	`(/usr/bin/time -f "%e" bunzip2 -k #{bz2} > /dev/null) 2>&1`.to_i
+	FileUtils.rm_f File.glob("*.fastq")
+	`(/usr/bin/time -f "%e" bunzip2 -k #{bz2} > /dev/null) 2>&1`.to_f
 end
 
 def decomp_bz2all(dir)
 	sam = Dir.entries(dir).select{|fname| fname =~ /.bz2$/ }.map do |fname|
+		FileUtils.rm_f File.glob("#{dir}/*.fastq")
 		`(/usr/bin/time -f "%e" bunzip2 -k #{dir}/#{fname} > /dev/null) 2>&1`.to_f
 	end
 	sam.reduce(:+)
@@ -70,19 +73,20 @@ if __FILE__ == $0
 			avgtime = 3.times.map{ decomp_bz2(input) }.reduce(:+) / 3
 			avgspeed = avgtime / File.size(input)
 			report(input, avgtime, avgspeed)
-	
+		end	
+
 	else
 		option = ARGV.first
 		input = ARGV[1]
 		
 		if option == "--gz"
 			avgtime = 3.times.map{ decomp_gzall(input) }.reduce(:+) / 3
-			avgspeed = avgtime / Dir.glob(*.gz).map{|f| File.size(f) }.reduce(:+)
+			avgspeed = avgtime / Dir.glob("*.gz").map{|f| File.size(f) }.reduce(:+)
 			report(input, avgtime, avgspeed)
 			
 		elsif option == "--bz2"
 			avgtime = 3.times.map{ decomp_bz2all(input) }.reduce(:+) / 3
-			avgspeed = avgtime / Dir.glob(*.bz2).map{|f| File.size(f) }.reduce(:+)
+			avgspeed = avgtime / Dir.glob("*.bz2").map{|f| File.size(f) }.reduce(:+)
 			report(input, avgtime, avgspeed)
 		end
 	end
