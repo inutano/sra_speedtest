@@ -2,7 +2,7 @@
 #
 # time file transfer from NCBI, EBI, and DDBJ with various transfer protocol.
 # calc avg time send it to stdout
-#
+# usage: transfer_speed.sh <target SRA Run ID>
 # requirement: SRA_Accessions.tab from ftp.ncbi.nlm.nih.gov/sra/reports/Metadata
 #
 ###################################################################################
@@ -10,11 +10,8 @@
 # time format (set as showing total time by second only)
 TIMEFMT="%E"
 
-### change here to target Run id
-# set ids
-run_id="DRR000983" # SRR073092
-
-# related ids
+# set ids and related
+run_id=$1
 run_head=`echo ${run_id} | sed -e 's:[0-9]\{3\}$::'`
 run_db=`echo ${run_id} | sed -e 's:[0-9]\{6\}::'`
 run_db_lc=`echo ${run_db} | tr '[:upper:]' '[:lower:]'`
