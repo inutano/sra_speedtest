@@ -19,34 +19,42 @@ class SRATransfer
 		@putty = "~/.aspera/connect/etc/asperaweb_id_dsa.putty"
 	end
 	def ncbi_ls_ftp(pnum)
+		FileUtils.rm_rf "./ncbi/#{@runid}_nlf"
 		loc = "ftp.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/litesra/#{@run_db}/#{@run_head}"
 		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ncbi/#{@runid}_nlf") 2>&1`.to_f
 	end
 	def ncbi_ls_aspera
+		FileUtils.rm_rf "./ncbi/#{@runid}_nla"
 		loc = "anonftp@ftp-trace.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/litesra/#{@run_db}/#{@run_head}/#{@runid}"
 		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ncbi/#{@runid}_nla) 2>&1`.to_f
 	end
 	def ebi_ls_ftp(pnum)
-		loc = "ftp.sra.ebi.ac.uk/vol1/fastq/#{@run_head}"
-		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ebi/#{@runid}_elf") 2>&1`.to_f
+		FileUtils.rm_rf "./ebi/#{@runid}_elf"
+		loc = "ftp.sra.ebi.ac.uk/vol1/#{@run_db.downcase}/#{@run_head}"
+		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf/#{@runid}.lite.sra ${@runid}") 2>&1`.to_f
 	end
 	def ebi_ls_aspera
+		FileUtils.rm_rf "./ebi/#{@runid}_ela"
 		loc = "era-fasp@fasp.sra.ebi.ac.uk:/vol1/#{@run_db.downcase}/#{@run_head}/#{@runid}"
-		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_ela) 2>&1`.to_f
+		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_ela/#{@runid}.lite.sra) 2>&1`.to_f
 	end
 	def ebi_fq_ftp(pnum)
+		FileUtils.rm_rf "./ebi/#{@runid}_eff"
 		loc = "ftp.sra.ebi.ac.uk/vol1/fastq/#{@run_head}"
 		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ebi/#{@runid}_eff") 2>&1`.to_f
 	end
 	def ebi_fq_aspera
+		FileUtils.rm_rf "./ebi/#{@runid}_efa"
 		loc = "era-fasp@fasp.sra.ebi.ac.uk:/vol1/fastq/#{@run_head}/#{@runid}"
 		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_efa) 2>&`.to_f
 	end
 	def ddbj_ls_ftp(pnum)
+		FileUtils.rm_rf "./ddbj/#{@runid}_dlf"
 		loc = "ftp.ddbj.nig.ac.jp/ddbj_database/dra/sralite/ByExp/litesra/#{@exp_db}/#{@exp_head}/#{@expid}"
 		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ddbj/#{@runid}_dlf") 2>&1`.to_f
 	end
 	def ddbj_fq_ftp(pnum)
+		FileUtils.rm_rf "./ddbj/#{@runid}_dff"
 		loc = "ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/#{@acc_head}/#{@accid}"
 		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ddbj/#{@runid}_dff") 2>&1`.to_f
 	end
