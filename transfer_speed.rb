@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
+# required: ./SRA_Accessions.tab (download at ftp.ncbi.nlm.nih.gov/sra/report/Metadata/SRA_Accessions.tab)
 
 require "fileutils"
 
@@ -72,8 +73,7 @@ class SRATransfer
 	end
 end
 
-if __FILE__ == $0
-	
+if __FILE__ == $0	
 	runid = ARGV.first
 	accessions = "./SRA_Accessions.tab"
 	transfer = SRATransfer.new(runid, accessions)
