@@ -31,7 +31,7 @@ class SRATransfer
 	def ebi_ls_ftp(pnum)
 		FileUtils.rm_rf "./ebi/#{@runid}_elf"
 		loc = "ftp.sra.ebi.ac.uk/vol1/#{@run_db.downcase}/#{@run_head}"
-		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf/#{@runid}.lite.sra ${@runid}") 2>&1`.to_f
+		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf/#{@runid}.lite.sra #{@runid}") 2>&1`.to_f
 	end
 	def ebi_ls_aspera
 		FileUtils.rm_rf "./ebi/#{@runid}_ela"
@@ -46,7 +46,7 @@ class SRATransfer
 	def ebi_fq_aspera
 		FileUtils.rm_rf "./ebi/#{@runid}_efa"
 		loc = "era-fasp@fasp.sra.ebi.ac.uk:/vol1/fastq/#{@run_head}/#{@runid}"
-		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_efa) 2>&`.to_f
+		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_efa) 2>&1`.to_f
 	end
 	def ddbj_ls_ftp(pnum)
 		FileUtils.rm_rf "./ddbj/#{@runid}_dlf"
@@ -59,8 +59,12 @@ class SRATransfer
 		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ddbj/#{@runid}_dff") 2>&1`.to_f
 	end
 	def report(avgtime, size, pnum = 0)
-		avgspeed = size / avgtime
-		puts "total size => #{size}, parallel => #{pnum}, avgtime => #{avgtime}, avgspeed => #{avgspeed}"
+		if size
+			avgspeed = size / avgtime
+			puts "total size => #{size}, parallel => #{pnum}, avgtime => #{avgtime}, avgspeed => #{avgspeed}"
+		else
+			puts "process may be failed - size: nil"
+		end
 	end
 end
 
