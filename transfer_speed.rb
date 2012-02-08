@@ -18,6 +18,10 @@ class SRATransfer
 		@ascp = "~/.aspera/connect/bin/ascp -q -k1 -QT"
 		@putty = "~/.aspera/connect/etc/asperaweb_id_dsa.putty"
 	end
+	attr_reader :runid
+	attr_reader :expid
+	attr_reader :accid
+	
 	def ncbi_ls_ftp(pnum)
 		FileUtils.rm_rf "./ncbi/#{@runid}_nlf"
 		loc = "ftp.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/litesra/#{@run_db}/#{@run_head}"
@@ -73,6 +77,8 @@ if __FILE__ == $0
 	runid = ARGV.first
 	accessions = "./SRA_Accessions.tab"
 	transfer = SRATransfer.new(runid, accessions)
+	
+	puts "RunID: #{transfer.runid}, ExperimentID: #{transfer.expid}, AccsessionID: #{transfer.accid}"
 	
 	puts "litesra from NCBI, lftp"
 	[1,2,4,8].each do |pnum|
