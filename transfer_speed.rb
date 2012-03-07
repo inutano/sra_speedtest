@@ -14,7 +14,7 @@ class SRATransfer
 		@exp_db = @expid.slice(0,3)
 		@exp_head = @expid.slice(0,6)
 		@accid = converter[1]
-		@acc_head = @accid.slice(0,3)
+		@acc_head = @accid.slice(0,6)
 		@tim = '/usr/bin/time -f "%e"'
 		@ascp = "~/.aspera/connect/bin/ascp -q -k1 -QT"
 		@putty = "~/.aspera/connect/etc/asperaweb_id_dsa.putty"
@@ -39,13 +39,14 @@ class SRATransfer
 		FileUtils.rm_rf "./ebi/#{@runid}_elf"
 		loc = "ftp.sra.ebi.ac.uk/vol1/#{@run_db.downcase}/#{@run_head}"
 		puts loc
-		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf/#{@runid}.lite.sra #{@runid}") 2>&1`.to_f
+		FileUtils.mkdir "./ebi/#{@runid}_elf"
+		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf/ #{@runid}") 2>&1`.to_f
 	end
 	def ebi_ls_aspera
 		FileUtils.rm_rf "./ebi/#{@runid}_ela"
 		loc = "era-fasp@fasp.sra.ebi.ac.uk:/vol1/#{@run_db.downcase}/#{@run_head}/#{@runid}"
 		puts loc
-		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_ela/#{@runid}.lite.sra) 2>&1`.to_f
+		`(#{@tim} #{@ascp} -i #{@putty} #{loc} ./ebi/#{@runid}_ela) 2>&1`.to_f
 	end
 	def ebi_fq_ftp(pnum)
 		FileUtils.rm_rf "./ebi/#{@runid}_eff"
@@ -69,7 +70,8 @@ class SRATransfer
 		FileUtils.rm_rf "./ddbj/#{@runid}_dff"
 		loc = "ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/#{@acc_head}/#{@accid}"
 		puts loc
-		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@runid} ./ddbj/#{@runid}_dff") 2>&1`.to_f
+		FileUtils.mkdir "./ddbj/#{@runid}_dff"
+		`(#{@tim} lftp -c "open #{loc} && mirror --parallel=#{pnum} #{@expid} ./ddbj/#{@runid}_dff") 2>&1`.to_f
 	end
 	def report(avgtime, size, pnum = 0)
 		if size
