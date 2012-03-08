@@ -4,7 +4,11 @@
 # usage:
 #  ruby decompress_speed.rb <filename>
 #  ruby decompress_speed.rb <option> <dirname>
-#  specify type of the files inside (--gz, --bz2) when a directory on argument.
+#  specify type of the files inside (--gz, --bz2) when specified a directory as an argument.
+#
+# example:
+#  ruby decompress_speed.rb SRR000001.lite.sra
+#  ruby decompress_speed.rb --gz ./SRR000001
 #
 
 require "fileutils"
