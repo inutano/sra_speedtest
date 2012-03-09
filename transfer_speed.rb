@@ -40,7 +40,7 @@ class SRATransfer
 		loc = "ftp.sra.ebi.ac.uk/vol1/#{@run_db.downcase}/#{@run_head}"
 		puts loc
 		FileUtils.mkdir "./ebi/#{@runid}_elf"
-		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf/ #{@runid}") 2>&1`.to_f
+		`(#{@tim} lftp -c "open #{loc} && pget -n #{pnum} -O ./ebi/#{@runid}_elf #{@runid}") 2>&1`.to_f
 	end
 	def ebi_ls_aspera
 		FileUtils.rm_rf "./ebi/#{@runid}_ela"
